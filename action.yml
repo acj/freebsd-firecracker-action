@@ -65,6 +65,10 @@ inputs:
         --copy-links \
         --exclude-from "$exclude_path" \
         firecracker: .
+  checkout:
+    required: false
+    type: boolean
+    default: true
   continue-on-error:
     required: false
     type: boolean
@@ -79,6 +83,7 @@ runs:
 
   steps:
     - name: Checkout
+      if: inputs.checkout == 'true'
       uses: actions/checkout@v4
       with:
         path: firecracker-freebsd

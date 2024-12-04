@@ -60,6 +60,10 @@ With the `post-run` input, you can run commands _outside_ of the VM before the V
       echo "Hello from outside the VM!"
 ```
 
+### `checkout`
+
+By default, the action will clone the repository into the VM. You can disable this behavior by setting `checkout` to `false`, which will disable the `actions/checkout` child action.
+
 ### `continue-on-error`
 
 By default, the action will abort if the `run` script returns a non-zero exit code. You can override this behavior by setting `continue-on-error` to `true`, which will guarantee that the `post-run` script is run.
