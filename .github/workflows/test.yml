@@ -16,7 +16,7 @@ jobs:
           pre-run: touch pre-run
       - run: if [ ! -f pre-run ]; then echo "pre-run should exist"; exit 1; fi
       - run: if [ "$(id -u)" = "0" ]; then echo "current user should not be root"; exit 1; fi
-  
+
   pre-run-non-root:
     name: Pre-run step executes as a user other than root
     runs-on: ubuntu-22.04
@@ -37,7 +37,7 @@ jobs:
           run-in-vm: uname -a > run-in-vm
       - run: if [ ! -f run-in-vm ]; then echo "run-in-vm should exist (copied out of VM)"; exit 1; fi
       - run: if ! grep -q "FreeBSD" run-in-vm; then echo "run-in-vm should contain FreeBSD"; exit 1; fi
-    
+
   post-run:
     name: Post-run step executes
     runs-on: ubuntu-22.04
