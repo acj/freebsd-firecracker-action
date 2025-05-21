@@ -7,7 +7,7 @@ on:
 jobs:
   pre-run:
     name: Pre-run step executes
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - run: if [ -f pre-run ]; then echo "pre-run should not exist yet"; exit 1; fi
@@ -19,7 +19,7 @@ jobs:
 
   pre-run-non-root:
     name: Pre-run step executes as a user other than root
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: ./
@@ -28,7 +28,7 @@ jobs:
 
   run-in-vm:
     name: Run-in-vm step executes
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - run: if [ -f run-in-vm ]; then echo "run-in-vm should not exist yet"; exit 1; fi
@@ -40,7 +40,7 @@ jobs:
 
   post-run:
     name: Post-run step executes
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - run: if [ -f post-run ]; then echo "post-run should not exist yet"; exit 1; fi
@@ -51,7 +51,7 @@ jobs:
 
   post-run-non-root:
     name: Pre-run step executes as a user other than root
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: ./
