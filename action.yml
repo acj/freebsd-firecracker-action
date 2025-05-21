@@ -201,9 +201,9 @@ runs:
         EOF
 
         if [ ${{ inputs.verbose }} = true ]; then
-          $firecracker_path --api-sock $API_SOCKET --config-file vmconfig.json --log-path $LOGFILE &
+          nohup $firecracker_path --api-sock $API_SOCKET --config-file vmconfig.json --log-path $LOGFILE &
         else
-          $firecracker_path --api-sock $API_SOCKET --config-file vmconfig.json --log-path $LOGFILE > /dev/null 2>&1 &
+          nohup $firecracker_path --api-sock $API_SOCKET --config-file vmconfig.json --log-path $LOGFILE > /dev/null 2>&1 &
         fi
         firecracker_pid=$!
 
