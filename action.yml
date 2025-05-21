@@ -206,6 +206,7 @@ runs:
           nohup $firecracker_path --api-sock $API_SOCKET --config-file vmconfig.json --log-path $LOGFILE > /dev/null 2>&1 &
         fi
         firecracker_pid=$!
+        echo "$firecracker_pid" > /tmp/firecracker.pid
 
         set +e
         for i in {1..10}; do
@@ -223,6 +224,7 @@ runs:
     - name: Run user scripts
       shell: bash -e {0}
       run: |
+        firecracker_pid=$(cat /tmp/firecracker.pid)
         pre_run_script=$(mktemp)
         run_in_vm_script=$(mktemp)
         post_run_script=$(mktemp)
@@ -245,6 +247,7 @@ runs:
           sh -e $post_run_script
         fi
         
+        # Shut down quickly. See https://man.freebsd.org/cgi/man.cgi?query=halt
         ssh firecracker reboot || true
-        wait $firecracker_pid
+        tail --pid=$firecracker_pid -f /dev/null || true
         exit $script_exit_code
