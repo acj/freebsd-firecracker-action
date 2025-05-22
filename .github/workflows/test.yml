@@ -1,7 +1,12 @@
 name: Test
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
+  schedule:
+    - cron: '0 6 * * 3'
   workflow_dispatch:
 
 jobs:
