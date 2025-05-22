@@ -19,7 +19,7 @@ This action uses a FreeBSD kernel, rootfs, and Firecracker binary from [freebsd-
 ## Current status
 
 - [X] Boots a VM in \~12 seconds in GitHub Actions
-- [X] Supports FreeBSD 14.0-RELEASE
+- [X] Supports FreeBSD 14.3-STABLE
 - [X] Supports Intel and AMD CPUs
 
 ## Supported inputs
