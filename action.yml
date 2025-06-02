@@ -158,7 +158,6 @@ runs:
         sudo iptables -I FORWARD 1 -i tap0 -o "$INET_DEV" -j ACCEPT
         
         API_SOCKET="/tmp/firecracker.socket"
-        LOGFILE="./firecracker.log"
         
         KERNEL="$kernel_path"
         KERNEL_BOOT_ARGS="vfs.root.mountfrom=ufs:/dev/vtbd0"
@@ -168,8 +167,6 @@ runs:
         # `fcnet-setup.sh`, this has been pre-configured in the guest rootfs. It is
         # important that `TAP_IP` and `FC_MAC` match this.
         FC_MAC="06:00:AC:10:00:02"
-
-        touch $LOGFILE
 
         cat <<EOF > vmconfig.json
         {
@@ -200,6 +197,8 @@ runs:
         }
         EOF
 
+        LOGFILE="/tmp/firecracker.log"
+        touch $LOGFILE
         if [ ${{ inputs.verbose }} = true ]; then
           nohup $firecracker_path --api-sock $API_SOCKET --config-file vmconfig.json --log-path $LOGFILE &
         else
@@ -209,13 +208,19 @@ runs:
         echo "$firecracker_pid" > /tmp/firecracker.pid
 
         set +e
+        vm_started=false
         for i in {1..10}; do
           ssh firecracker true
           if [ $? -eq 0 ]; then
+            vm_started=true
             break
           fi
           sleep 1
         done
+        if [ "$vm_started" = false ]; then
+          echo "Failed to start Firecracker VM after 10 attempts. Please report this issue and include the Firecracker VM log."
+          exit 1
+        fi
         set -e
 
         # Disable segmentation offload as workaround for https://github.com/firecracker-microvm/firecracker/issues/3905
@@ -250,4 +255,13 @@ runs:
         # Shut down quickly. See https://man.freebsd.org/cgi/man.cgi?query=halt
         ssh firecracker reboot || true
         tail --pid=$firecracker_pid -f /dev/null || true
+
         exit $script_exit_code
+
+    - name: Attach VM logs
+      if: always()
+      shell: bash -e {0}
+      run: |
+        echo "::group::ℹ️ Firecracker VM log (please link to this or attach the log contents when reporting a bug in this action)"
+        cat /tmp/firecracker.log
+        echo "::endgroup::"
