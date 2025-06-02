@@ -21,6 +21,7 @@ jobs:
       - uses: ./
         with:
           pre-run: touch pre-run
+          verbose: true
       - run: if [ ! -f pre-run ]; then echo "pre-run should exist"; exit 1; fi
       - run: if [ "$(id -u)" = "0" ]; then echo "current user should not be root"; exit 1; fi
 
@@ -32,6 +33,7 @@ jobs:
       - uses: ./
         with:
           pre-run: if [ "$(id -u)" = "0" ]; then echo "current user should not be root"; exit 1; fi
+          verbose: true
 
   run-in-vm:
     name: Run-in-vm step executes
@@ -42,6 +44,7 @@ jobs:
       - uses: ./
         with:
           run-in-vm: uname -a > run-in-vm
+          verbose: true
       - run: if [ ! -f run-in-vm ]; then echo "run-in-vm should exist (copied out of VM)"; exit 1; fi
       - run: if ! grep -q "FreeBSD" run-in-vm; then echo "run-in-vm should contain FreeBSD"; exit 1; fi
 
@@ -54,6 +57,7 @@ jobs:
       - uses: ./
         with:
           post-run: touch post-run
+          verbose: true
       - run: if [ ! -f post-run ]; then echo "post-run should exist"; exit 1; fi
 
   post-run-non-root:
@@ -64,3 +68,4 @@ jobs:
       - uses: ./
         with:
           post-run: if [ "$(id -u)" = "0" ]; then echo "current user should not be root"; exit 1; fi
+          verbose: true
