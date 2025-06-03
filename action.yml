@@ -197,31 +197,47 @@ runs:
         }
         EOF
 
-        LOGFILE="/tmp/firecracker.log"
-        touch $LOGFILE
-        if [ ${{ inputs.verbose }} = true ]; then
-          nohup $firecracker_path --api-sock $API_SOCKET --config-file vmconfig.json --log-path $LOGFILE &
-        else
-          nohup $firecracker_path --api-sock $API_SOCKET --config-file vmconfig.json --log-path $LOGFILE > /dev/null 2>&1 &
-        fi
-        firecracker_pid=$!
-        echo "$firecracker_pid" > /tmp/firecracker.pid
-
-        set +e
-        vm_started=false
-        for i in {1..10}; do
-          ssh firecracker true
-          if [ $? -eq 0 ]; then
-            vm_started=true
-            break
+        for vm_start_attempt in {1..3}; do
+          if [ -e "$API_SOCKET" ]; then
+            echo "Removing stale API socket from previous run"
+            rm -f "$API_SOCKET"
           fi
-          sleep 1
+
+          LOGFILE="/tmp/firecracker.log"
+          touch $LOGFILE
+          if [ ${{ inputs.verbose }} = true ]; then
+            nohup $firecracker_path --api-sock $API_SOCKET --config-file vmconfig.json --log-path $LOGFILE &
+          else
+            nohup $firecracker_path --api-sock $API_SOCKET --config-file vmconfig.json --log-path $LOGFILE > /dev/null 2>&1 &
+          fi
+          firecracker_pid=$!
+          echo "$firecracker_pid" > /tmp/firecracker.pid
+
+          set +e
+          vm_started=false
+          for vm_connect_attempt in {1..10}; do
+            ssh firecracker true
+            if [ $? -eq 0 ]; then
+              vm_started=true
+              break
+            fi
+            sleep 1
+          done
+          if [ $vm_started = true ]; then
+            break
+          else
+            echo "Attempt $vm_start_attempt: Firecracker VM did not start, retrying..."
+            kill $firecracker_pid || true
+          fi
+          set -e
         done
-        if [ "$vm_started" = false ]; then
-          echo "Failed to start Firecracker VM after 10 attempts. Please report this issue and include the Firecracker VM log."
+
+        if [ "$vm_started" = true ]; then
+          echo "✅ Firecracker VM started successfully"
+        else
+          echo "❌ Failed to start Firecracker VM after multiple attempts. Please report this issue and include the Firecracker VM log below."
           exit 1
         fi
-        set -e
 
         # Disable segmentation offload as workaround for https://github.com/firecracker-microvm/firecracker/issues/3905
         sudo ethtool -K "$TAP_DEV" tso off
