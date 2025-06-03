@@ -228,6 +228,11 @@ runs:
           else
             echo "Attempt $vm_start_attempt: Firecracker VM did not start, retrying..."
             kill $firecracker_pid || true
+
+            echo "::group::ℹ️ Firecracker VM log (attempt $vm_start_attempt)"
+            cat $LOGFILE
+            echo "::endgroup::"
+            rm -f $LOGFILE
           fi
           set -e
         done
