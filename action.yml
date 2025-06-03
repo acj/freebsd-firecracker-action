@@ -215,7 +215,7 @@ runs:
 
           set +e
           vm_started=false
-          for vm_connect_attempt in {1..10}; do
+          for vm_connect_attempt in {1..5}; do
             ssh firecracker true
             if [ $? -eq 0 ]; then
               vm_started=true
