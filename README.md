@@ -6,7 +6,7 @@ This GitHub Action launches a Firecracker VM running FreeBSD. Typical boot time 
 
 ```yaml
 - name: Launch Firecracker VM
-  uses: acj/freebsd-firecracker-action@v0.4.1
+  uses: acj/freebsd-firecracker-action@v0.4.2
   with:
     run: |
       echo "Hello from inside the VM!"
@@ -30,7 +30,7 @@ With the `pre-run` input, you can run commands _outside_ of the VM after the VM 
 
 ```yaml
 - name: Launch Firecracker VM
-  uses: acj/freebsd-firecracker-action@v0.4.1
+  uses: acj/freebsd-firecracker-action@v0.4.2
   with:
     pre-run: |
       echo "Hello from outside the VM!"
@@ -42,7 +42,7 @@ With the `run` input, you can run commands _inside_ of the VM.
 
 ```yaml
 - name: Launch Firecracker VM
-  uses: acj/freebsd-firecracker-action@v0.4.1
+  uses: acj/freebsd-firecracker-action@v0.4.2
   with:
     run: |
       echo "Hello from inside the VM!"
@@ -54,7 +54,7 @@ With the `post-run` input, you can run commands _outside_ of the VM before the V
 
 ```yaml
 - name: Launch Firecracker VM
-  uses: acj/freebsd-firecracker-action@v0.4.1
+  uses: acj/freebsd-firecracker-action@v0.4.2
   with:
     post-run: |
       echo "Hello from outside the VM!"
