@@ -62,7 +62,9 @@ With the `post-run` input, you can run commands _outside_ of the VM before the V
 
 ### `checkout`
 
-By default, the action will clone the repository into the VM. You can disable this behavior by setting `checkout` to `false`, which will disable the `actions/checkout` child action.
+Default: `true`
+
+Clone the repository into the VM. You can disable this behavior by setting `checkout` to `false`, which will disable the `actions/checkout` child action.
 
 ### `disk-size`
 
@@ -76,9 +78,13 @@ This can be increased if you need more space inside the VM for larger repositori
 
 ### `continue-on-error`
 
-By default, the action will abort if the `run` script returns a non-zero exit code. You can override this behavior by setting `continue-on-error` to `true`, which will guarantee that the `post-run` script is run.
+Default: `false`
+
+Whether to continue if the `run` script returns a non-zero exit code. Setting this to `true` will guarantee that the `post-run` script is run.
 
 ### `verbose`
+
+Default: `false`
 
 Prints extra information about the runner and the VM. Useful for debugging.
 
