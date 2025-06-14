@@ -244,9 +244,6 @@ runs:
           exit 1
         fi
 
-        # Disable segmentation offload as workaround for https://github.com/firecracker-microvm/firecracker/issues/3905
-        sudo ethtool -K "$TAP_DEV" tso off
-
     - name: Run user scripts
       shell: bash -e {0}
       run: |
