@@ -69,3 +69,14 @@ jobs:
         with:
           post-run: if [ "$(id -u)" = "0" ]; then echo "current user should not be root"; exit 1; fi
           verbose: true
+
+  resize-disk:
+    name: Resize the rootfs filesystem to a given size
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          disk-size: 4G
+          run-in-vm: dd if=/dev/zero of=/rootfs.img bs=1M count=3600
+          verbose: true

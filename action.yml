@@ -77,6 +77,10 @@ inputs:
     required: false
     type: boolean
     default: false
+  disk-size:
+    required: false
+    type: string
+    default: "2G"
 
 runs:
   using: "composite"
@@ -112,6 +116,7 @@ runs:
         rootfs_path="$(mktemp)"
         wget -q -O /tmp/freebsd-rootfs.bin.xz ${{ inputs.rootfs-url }}
         xz -T 0 -d /tmp/freebsd-rootfs.bin.xz
+        truncate -s ${{ inputs.disk-size }} /tmp/freebsd-rootfs.bin
         mv /tmp/freebsd-rootfs.bin "$rootfs_path"
 
         firecracker_path="$(mktemp)"

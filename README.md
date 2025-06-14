@@ -64,6 +64,16 @@ With the `post-run` input, you can run commands _outside_ of the VM before the V
 
 By default, the action will clone the repository into the VM. You can disable this behavior by setting `checkout` to `false`, which will disable the `actions/checkout` child action.
 
+### `disk-size`
+
+Default: `2G`
+
+The size of the VM's disk image in units recognized by [truncate(1)](https://linux.die.net/man/1/truncate):
+
+> Units are K,M,G,T,P,E,Z,Y (powers of 1024) or KB,MB,... (powers of 1000). Binary prefixes can be used, too: KiB=K, MiB=M, and so on.
+
+This can be increased if you need more space inside the VM for larger repositories, builds that produce large output, etc.
+
 ### `continue-on-error`
 
 By default, the action will abort if the `run` script returns a non-zero exit code. You can override this behavior by setting `continue-on-error` to `true`, which will guarantee that the `post-run` script is run.
