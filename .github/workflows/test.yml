@@ -16,7 +16,7 @@ jobs:
     name: Pre-run step executes
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
       - run: if [ -f pre-run ]; then echo "pre-run should not exist yet"; exit 1; fi
       - uses: ./
         with:
@@ -29,7 +29,7 @@ jobs:
     name: Pre-run step executes as a user other than root
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
       - uses: ./
         with:
           pre-run: if [ "$(id -u)" = "0" ]; then echo "current user should not be root"; exit 1; fi
@@ -39,7 +39,7 @@ jobs:
     name: Run-in-vm step executes
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
       - run: if [ -f run-in-vm ]; then echo "run-in-vm should not exist yet"; exit 1; fi
       - uses: ./
         with:
@@ -52,7 +52,7 @@ jobs:
     name: Post-run step executes
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
       - run: if [ -f post-run ]; then echo "post-run should not exist yet"; exit 1; fi
       - uses: ./
         with:
@@ -64,7 +64,7 @@ jobs:
     name: Pre-run step executes as a user other than root
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
       - uses: ./
         with:
           post-run: if [ "$(id -u)" = "0" ]; then echo "current user should not be root"; exit 1; fi
@@ -74,7 +74,7 @@ jobs:
     name: Resize the rootfs filesystem to a given size
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
       - uses: ./
         with:
           disk-size: 4G
