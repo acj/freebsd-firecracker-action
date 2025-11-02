@@ -80,3 +80,13 @@ jobs:
           disk-size: 4G
           run-in-vm: dd if=/dev/zero of=/rootfs.img bs=1M count=3600
           verbose: true
+
+  pkg:
+    name: Install a package inside the VM
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+      - uses: ./
+        with:
+          run-in-vm: pkg install -y lynx
+          verbose: true
