@@ -6,23 +6,23 @@ inputs:
   kernel-url:
     type: string
     required: false
-    default: https://github.com/acj/freebsd-firecracker/releases/download/v0.6.0/freebsd-kern.bin
+    default: https://github.com/acj/freebsd-firecracker/releases/download/v0.7.2/freebsd-kern.bin
   rootfs-url:
     type: string
     required: false
-    default: https://github.com/acj/freebsd-firecracker/releases/download/v0.6.0/freebsd-rootfs.bin.xz
+    default: https://github.com/acj/freebsd-firecracker/releases/download/v0.7.2/freebsd-rootfs.bin.xz
   firecracker-url:
     type: string
     required: false
-    default: https://github.com/acj/freebsd-firecracker/releases/download/v0.6.0/firecracker
+    default: https://github.com/acj/freebsd-firecracker/releases/download/v0.7.2/firecracker
   ssh-public-key-url:
     type: string
     required: false
-    default: https://github.com/acj/freebsd-firecracker/releases/download/v0.6.0/freebsd.id_rsa.pub
+    default: https://github.com/acj/freebsd-firecracker/releases/download/v0.7.2/freebsd.id_rsa.pub
   ssh-private-key-url:
     type: string
     required: false
-    default: https://github.com/acj/freebsd-firecracker/releases/download/v0.6.0/freebsd.id_rsa
+    default: https://github.com/acj/freebsd-firecracker/releases/download/v0.7.2/freebsd.id_rsa
   pre-run:
     description: |
       An optional script to run before starting the FreeBSD virtual machine. This script runs on
