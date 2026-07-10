@@ -14,7 +14,7 @@ This GitHub Action launches a Firecracker VM running FreeBSD. Typical boot time 
 
 ## How it works
 
-This action uses a FreeBSD kernel, rootfs, and Firecracker binary from [freebsd-firecracker](https://github.com/acj/freebsd-firecracker). These include patches to make FreeBSD boot in Firecracker on the GitHub Actions runner hardware.
+This action uses a FreeBSD kernel, rootfs, and Firecracker binary from [freebsd-firecracker](https://github.com/acj/freebsd-firecracker). These include patches to make FreeBSD boot in Firecracker on the GitHub Actions runner hardware. The VM is launched with [firectl](https://github.com/firecracker-microvm/firectl), which configures Firecracker over its API socket.
 
 ## Current status
 
@@ -103,6 +103,10 @@ Overrides the URL where the FreeBSD rootfs image is downloaded from.
 #### `firecracker-url`
 
 Overrides the URL where the Firecracker binary is downloaded from.
+
+#### `firectl-url`
+
+Overrides the URL where the [firectl](https://github.com/firecracker-microvm/firectl) binary is downloaded from.
 
 #### `ssh-private-key-url`
 

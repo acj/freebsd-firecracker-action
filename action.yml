@@ -15,6 +15,10 @@ inputs:
     type: string
     required: false
     default: https://github.com/acj/freebsd-firecracker/releases/download/v0.9.0/firecracker
+  firectl-url:
+    type: string
+    required: false
+    default: https://github.com/firecracker-microvm/firectl/releases/download/v0.2.0/firectl-v0.2.0
   ssh-public-key-url:
     type: string
     required: false
@@ -123,6 +127,10 @@ runs:
         wget -q -O "$firecracker_path" ${{ inputs.firecracker-url }}
         chmod +x "$firecracker_path"
 
+        firectl_path="$(mktemp)"
+        wget -q -O "$firectl_path" ${{ inputs.firectl-url }}
+        chmod +x "$firectl_path"
+
         public_key_path="$(mktemp)"
         private_key_path="$(mktemp)"
         wget -q -O "$public_key_path" ${{ inputs.ssh-public-key-url }}
@@ -173,34 +181,11 @@ runs:
         # important that `TAP_IP` and `FC_MAC` match this.
         FC_MAC="06:00:AC:10:00:02"
 
-        cat <<EOF > vmconfig.json
-        {
-          "boot-source": {
-            "kernel_image_path": "$KERNEL",
-            "boot_args": "$KERNEL_BOOT_ARGS"
-          },
-          "drives": [
-            {
-              "drive_id": "rootfs",
-              "path_on_host": "$ROOTFS",
-              "is_root_device": true,
-              "is_read_only": false
-            }
-          ],
-          "network-interfaces": [
-              {
-                  "iface_id": "eth0",
-                  "guest_mac": "$FC_MAC",
-                  "host_dev_name": "$TAP_DEV"
-              }
-          ],
-          "machine-config": {
-            "vcpu_count": 2,
-            "mem_size_mib": 5120,
-            "smt": false
-          }
-        }
-        EOF
+        if [ ${{ inputs.verbose }} = true ]; then
+          FC_LOG_LEVEL="Debug"
+        else
+          FC_LOG_LEVEL="Warning"
+        fi
 
         for vm_start_attempt in {1..3}; do
           if [ -e "$API_SOCKET" ]; then
@@ -210,13 +195,26 @@ runs:
 
           LOGFILE="/tmp/firecracker.log"
           touch $LOGFILE
+          firectl_args=(
+            --firecracker-binary "$firecracker_path"
+            --socket-path "$API_SOCKET"
+            --kernel "$KERNEL"
+            --kernel-opts "$KERNEL_BOOT_ARGS"
+            --root-drive "$ROOTFS"
+            --tap-device "${TAP_DEV}/${FC_MAC}"
+            --ncpus 2
+            --memory 5120
+            --disable-smt
+            --log-level "$FC_LOG_LEVEL"
+            --firecracker-log "$LOGFILE"
+          )
           if [ ${{ inputs.verbose }} = true ]; then
-            nohup $firecracker_path --api-sock $API_SOCKET --config-file vmconfig.json --log-path $LOGFILE &
+            nohup $firectl_path "${firectl_args[@]}" &
           else
-            nohup $firecracker_path --api-sock $API_SOCKET --config-file vmconfig.json --log-path $LOGFILE > /dev/null 2>&1 &
+            nohup $firectl_path "${firectl_args[@]}" > /dev/null 2>&1 &
           fi
-          firecracker_pid=$!
-          echo "$firecracker_pid" > /tmp/firecracker.pid
+          firectl_pid=$!
+          echo "$firectl_pid" > /tmp/firecracker.pid
 
           set +e
           vm_started=false
@@ -232,8 +230,10 @@ runs:
             break
           else
             echo "Attempt $vm_start_attempt: Firecracker VM did not start, retrying..."
-            kill "$firecracker_pid" || true
-            wait "$firecracker_pid" || true
+            # SIGQUIT makes firectl stop the VMM immediately; SIGTERM would ask
+            # the (unresponsive) guest to shut down cleanly and could hang.
+            kill -QUIT "$firectl_pid" || true
+            wait "$firectl_pid" || true
 
             echo "::group::ℹ️ Firecracker VM log (attempt $vm_start_attempt)"
             cat $LOGFILE
@@ -257,7 +257,7 @@ runs:
         RUN_IN_VM_SCRIPT: ${{ inputs.run-in-vm }}
         POST_RUN_SCRIPT: ${{ inputs.post-run }}
       run: |
-        firecracker_pid=$(cat /tmp/firecracker.pid)
+        firectl_pid=$(cat /tmp/firecracker.pid)
         pre_run_script=$(mktemp)
         run_in_vm_script=$(mktemp)
         post_run_script=$(mktemp)
@@ -282,7 +282,7 @@ runs:
         
         # Shut down quickly. See https://man.freebsd.org/cgi/man.cgi?query=halt
         ssh firecracker reboot || true
-        tail --pid=$firecracker_pid -f /dev/null || true
+        tail --pid=$firectl_pid -f /dev/null || true
 
         exit $script_exit_code
 
