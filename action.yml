@@ -145,7 +145,14 @@ runs:
 
         sudo setfacl -m u:${USER}:rw /dev/kvm
 
-        INET_DEV="eth0"
+        INET_DEV="$(ip -o -4 route show to default | awk '{print $5; exit}')"
+        if [ -z "$INET_DEV" ]; then
+          echo "❌ Could not determine the host's default network interface"
+          ip -br addr
+          ip route
+          exit 1
+        fi
+        echo "Using host network interface $INET_DEV"
         TAP_DEV="tap0"
         TAP_IP="172.16.0.1"
         MASK_SHORT="/24"
