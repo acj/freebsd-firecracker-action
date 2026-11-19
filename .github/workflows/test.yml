@@ -118,7 +118,7 @@ jobs:
         with:
           run-in-vm: |
             cat /etc/resolv.conf
-            host -W 5 download.freebsd.org
+            getent hosts download.freebsd.org
             fetch -T 30 -o /dev/null https://download.freebsd.org/
           verbose: true
 
