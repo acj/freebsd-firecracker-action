@@ -109,6 +109,19 @@ jobs:
           actual="$(cat ncpu)"
           if [ "$actual" != "$expected" ]; then echo "VM should report $expected vCPU(s), got $actual"; exit 1; fi
 
+  network-outbound:
+    name: VM can reach the internet through the host
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: ./
+        with:
+          run-in-vm: |
+            cat /etc/resolv.conf
+            host -W 5 download.freebsd.org
+            fetch -T 30 -o /dev/null https://download.freebsd.org/
+          verbose: true
+
   resize-disk:
     name: Resize the rootfs filesystem to a given size
     runs-on: ubuntu-24.04
